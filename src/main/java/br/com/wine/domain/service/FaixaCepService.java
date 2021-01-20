@@ -1,5 +1,6 @@
 package br.com.wine.domain.service;
 
+import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -13,6 +14,11 @@ public class FaixaCepService {
 
 	@Autowired
 	private FaixaCepRepository faixaCepRepository;
+	
+	public FaixaCep buscarOuFalha(Long id) throws EntidadeNaoEncontradaException {
+		return faixaCepRepository.findById(id)
+				.orElseThrow(() -> new EntidadeNaoEncontradaException("Faixa Cep não encontrada"));
+	}
 
 	public FaixaCep salvar(FaixaCep faixaCep) throws FaixaCepConflitoException {
 		if (faixaCepRepository.jaPossuiFaixa(faixaCep)) {
@@ -21,9 +27,17 @@ public class FaixaCepService {
 		return faixaCepRepository.save(faixaCep);
 	}
 
+	public FaixaCep atualizar(Long id, FaixaCep faixaCep) {
+		final FaixaCep oldFaixaCep = buscarOuFalha(id);
+		BeanUtils.copyProperties(faixaCep, oldFaixaCep, "id");
+		if (faixaCepRepository.jaPossuiFaixa(oldFaixaCep, oldFaixaCep.getId())) {
+			throw new FaixaCepConflitoException("As faixas inicial ou final já foram cadastradas");
+		}
+		return faixaCepRepository.save(oldFaixaCep);
+	}
+
 	public void excluir(Long id) throws EntidadeNaoEncontradaException {
-		final FaixaCep faixaCep = faixaCepRepository.findById(id)
-				.orElseThrow(() -> new EntidadeNaoEncontradaException("Faixa Cep não encontrada"));
+		final FaixaCep faixaCep = buscarOuFalha(id);
 		faixaCepRepository.delete(faixaCep);
 	}
 }

@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -25,18 +26,18 @@ import br.com.wine.domain.service.FaixaCepService;
 @RestController
 @RequestMapping("/faixaCep")
 public class FaixaCepController {
-	
+
 	@Autowired
 	private FaixaCepService faixaCepService;
-	
+
 	@Autowired
 	private FaixaCepRepository faixaCepRepository;
-	
+
 	@GetMapping
 	public List<FaixaCep> listar() {
 		return faixaCepRepository.findAll();
 	}
-	
+
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<?> salvar(@Valid @RequestBody FaixaCep faixaCep) {
@@ -47,7 +48,17 @@ public class FaixaCepController {
 			return ResponseEntity.badRequest().body(e.getMessage());
 		}
 	}
-	
+
+	@PutMapping("/{id}")
+	public ResponseEntity<?> atualizar(@PathVariable Long id, @Valid @RequestBody FaixaCep faixaCep) {
+		try {
+			final FaixaCep faixaCepSalva = faixaCepService.atualizar(id, faixaCep);
+			return ResponseEntity.ok(faixaCepSalva);
+		} catch (FaixaCepConflitoException e) {
+			return ResponseEntity.badRequest().body(e.getMessage());
+		}
+	}
+
 	@DeleteMapping("/{id}")
 	public ResponseEntity<?> excluir(@PathVariable Long id) {
 		try {

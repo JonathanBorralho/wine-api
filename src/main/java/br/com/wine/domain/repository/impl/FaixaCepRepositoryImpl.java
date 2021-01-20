@@ -26,4 +26,18 @@ public class FaixaCepRepositoryImpl implements FaixaCepRepositoryQueries {
 				.getSingleResult() > 0;
 	}
 
+	@Override
+	public boolean jaPossuiFaixa(FaixaCep faixaCep, Long faixaCepExcecaoId) {
+		final String jpql = "select count(fc) from FaixaCep fc "
+				+ " where fc.id <> :faixaCepExcecaoId and ("
+				+ " :faixaInicio between fc.faixaInicio and fc.faixaFim "
+				+ " or :faixaFim between fc.faixaInicio and fc.faixaFim)";
+		return manager
+				.createQuery(jpql, Long.class)
+				.setParameter("faixaCepExcecaoId", faixaCepExcecaoId)
+				.setParameter("faixaInicio", faixaCep.getFaixaInicio())
+				.setParameter("faixaFim", faixaCep.getFaixaFim())
+				.getSingleResult() > 0;
+	}
+
 }
