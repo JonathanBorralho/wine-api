@@ -16,6 +16,9 @@ public class Loja {
 	@Id
 	private Long id;
 	
+	/**
+	 * Propriedade não é um chave estrangeira para manter simplicidade
+	 */
 	private String cidade;
 	
 	private String bairro;

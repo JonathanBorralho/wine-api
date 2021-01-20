@@ -15,7 +15,7 @@ public class FaixaCepService {
 	@Autowired
 	private FaixaCepRepository faixaCepRepository;
 	
-	public FaixaCep buscarOuFalha(Long id) throws EntidadeNaoEncontradaException {
+	public FaixaCep buscarOuFalhar(Long id) throws EntidadeNaoEncontradaException {
 		return faixaCepRepository.findById(id)
 				.orElseThrow(() -> new EntidadeNaoEncontradaException("Faixa Cep não encontrada"));
 	}
@@ -28,7 +28,7 @@ public class FaixaCepService {
 	}
 
 	public FaixaCep atualizar(Long id, FaixaCep faixaCep) {
-		final FaixaCep oldFaixaCep = buscarOuFalha(id);
+		final FaixaCep oldFaixaCep = buscarOuFalhar(id);
 		BeanUtils.copyProperties(faixaCep, oldFaixaCep, "id");
 		if (faixaCepRepository.jaPossuiFaixa(oldFaixaCep, oldFaixaCep.getId())) {
 			throw new FaixaCepConflitoException("As faixas inicial ou final já foram cadastradas");
@@ -37,7 +37,7 @@ public class FaixaCepService {
 	}
 
 	public void excluir(Long id) throws EntidadeNaoEncontradaException {
-		final FaixaCep faixaCep = buscarOuFalha(id);
+		final FaixaCep faixaCep = buscarOuFalhar(id);
 		faixaCepRepository.delete(faixaCep);
 	}
 }
