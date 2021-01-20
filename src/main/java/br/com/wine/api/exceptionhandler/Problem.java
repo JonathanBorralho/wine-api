@@ -8,6 +8,11 @@ import com.fasterxml.jackson.annotation.JsonInclude.Include;
 import lombok.Builder;
 import lombok.Getter;
 
+/**
+ * Usando a especificação Problem Details for HTTP APIs <br>
+ * {@link https://tools.ietf.org/html/rfc7807}
+ */
+
 @JsonInclude(Include.NON_NULL)
 @Getter
 @Builder
