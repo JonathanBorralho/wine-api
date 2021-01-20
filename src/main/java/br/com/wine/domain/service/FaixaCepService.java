@@ -11,18 +11,18 @@ import br.com.wine.domain.repository.FaixaCepRepository;
 
 @Service
 public class FaixaCepService {
-
+	
 	@Autowired
 	private FaixaCepRepository faixaCepRepository;
 	
 	public FaixaCep buscarOuFalhar(Long id) throws EntidadeNaoEncontradaException {
 		return faixaCepRepository.findById(id)
-				.orElseThrow(() -> new EntidadeNaoEncontradaException("Faixa Cep não encontrada"));
+				.orElseThrow(() -> new EntidadeNaoEncontradaException("Faixa de CEP não encontrada"));
 	}
 
 	public FaixaCep salvar(FaixaCep faixaCep) throws FaixaCepConflitoException {
 		if (faixaCepRepository.jaPossuiFaixa(faixaCep)) {
-			throw new FaixaCepConflitoException("As faixas inicial ou final já foram cadastradas");
+			throw new FaixaCepConflitoException();
 		}
 		return faixaCepRepository.save(faixaCep);
 	}
@@ -31,7 +31,7 @@ public class FaixaCepService {
 		final FaixaCep oldFaixaCep = buscarOuFalhar(id);
 		BeanUtils.copyProperties(faixaCep, oldFaixaCep, "id");
 		if (faixaCepRepository.jaPossuiFaixa(oldFaixaCep, oldFaixaCep.getId())) {
-			throw new FaixaCepConflitoException("As faixas inicial ou final já foram cadastradas");
+			throw new FaixaCepConflitoException();
 		}
 		return faixaCepRepository.save(oldFaixaCep);
 	}

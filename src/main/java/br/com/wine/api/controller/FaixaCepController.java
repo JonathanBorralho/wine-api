@@ -17,8 +17,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 
-import br.com.wine.domain.exception.EntidadeNaoEncontradaException;
-import br.com.wine.domain.exception.FaixaCepConflitoException;
 import br.com.wine.domain.model.FaixaCep;
 import br.com.wine.domain.repository.FaixaCepRepository;
 import br.com.wine.domain.service.FaixaCepService;
@@ -41,31 +39,19 @@ public class FaixaCepController {
 	@PostMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public ResponseEntity<?> salvar(@Valid @RequestBody FaixaCep faixaCep) {
-		try {
-			final FaixaCep faixaCepSalva = faixaCepService.salvar(faixaCep);
-			return ResponseEntity.ok(faixaCepSalva);
-		} catch (FaixaCepConflitoException e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
+		final FaixaCep faixaCepSalva = faixaCepService.salvar(faixaCep);
+		return ResponseEntity.ok(faixaCepSalva);
 	}
 
 	@PutMapping("/{id}")
 	public ResponseEntity<?> atualizar(@PathVariable Long id, @Valid @RequestBody FaixaCep faixaCep) {
-		try {
-			final FaixaCep faixaCepSalva = faixaCepService.atualizar(id, faixaCep);
-			return ResponseEntity.ok(faixaCepSalva);
-		} catch (FaixaCepConflitoException e) {
-			return ResponseEntity.badRequest().body(e.getMessage());
-		}
+		final FaixaCep faixaCepSalva = faixaCepService.atualizar(id, faixaCep);
+		return ResponseEntity.ok(faixaCepSalva);
 	}
 
 	@DeleteMapping("/{id}")
-	public ResponseEntity<?> excluir(@PathVariable Long id) {
-		try {
-			faixaCepService.excluir(id);
-			return ResponseEntity.noContent().build();
-		} catch (EntidadeNaoEncontradaException e) {
-			return ResponseEntity.notFound().build();
-		}
+	@ResponseStatus(HttpStatus.NO_CONTENT)
+	public void excluir(@PathVariable Long id) {
+		faixaCepService.excluir(id);
 	}
 }

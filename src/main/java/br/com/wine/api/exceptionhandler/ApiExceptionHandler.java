@@ -14,6 +14,7 @@ import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import br.com.wine.domain.exception.EntidadeNaoEncontradaException;
+import br.com.wine.domain.exception.FaixaCepConflitoException;
 
 @ControllerAdvice
 public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
@@ -54,6 +55,19 @@ public class ApiExceptionHandler extends ResponseEntityExceptionHandler {
 				.userMessage(detail)
 				.build();
 		
+		return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
+	}
+	
+	@ExceptionHandler(FaixaCepConflitoException.class)
+	public ResponseEntity<?> handleFaixaCepConflitoException(FaixaCepConflitoException ex, WebRequest request) {
+		HttpStatus status = HttpStatus.BAD_REQUEST;
+		ProblemType problemType = ProblemType.FAIXA_CEP_CONFLITO;
+		String detail = ex.getMessage();
+
+		Problem problem = createProblemBuilder(status, problemType, detail)
+				.userMessage(detail)
+				.build();
+
 		return handleExceptionInternal(ex, problem, new HttpHeaders(), status, request);
 	}
 	
